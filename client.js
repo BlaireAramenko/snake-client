@@ -1,24 +1,29 @@
 const net = require("net");
 
-// establishes a connection with the game server
 const connect = function () {
   const conn = net.createConnection({
     host: "localhost",
     port: 50541,
   });
 
-  // interpret incoming data as text
   conn.setEncoding("utf8");
 
-  conn.connect("connect", () => {
+  conn.on("connect", () => {
     console.log("Successfully connected to game server");
     conn.write("Name: BKA");
+
+    // console.log("Sending Move: up message to server...");
+    setTimeout(() => {
+      conn.write("Move: up");
+    }, 1000);
   });
 
   conn.on("data", (data) => {
     console.log("Server says:", data);
+    if (data.includes("===")) {
+      console.log("Game board received:", data);
+    }
   });
-
 
   return conn;
 };
